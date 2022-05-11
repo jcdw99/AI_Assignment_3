@@ -99,6 +99,36 @@ public class SingleObjectiveFunctions {
         }
     }
 
+     /**
+     * Defers to correct name procedure specified by the FLAG
+     */
+    public static String getName(byte FLAG) throws Exception {
+        switch (FLAG) {
+            // Ellip benchmark function
+            case 1:
+                return Ellip.name();
+            case 2:
+                return Ackley.name();
+            case 3:
+                return Rastrigin.name();
+            case 4:
+                return Step.name();
+            case 5:
+                return CosMix.name();
+            case 6:
+                return Quartic.name();
+            case 7:
+                return Zakharov.name();
+            case 8:
+                return Salomon.name();
+            case 9:
+                return BentCigar.name();
+            case 10:
+                return Mishra1.name();
+            default:
+                throw new Exception("Function FLAG not recognized");
+        }
+    }
 
     /**
      * Ackley benchmark function, it is denoted by the flag [2]
@@ -128,6 +158,9 @@ public class SingleObjectiveFunctions {
             }
             return true;
         }
+        public static String name() {
+            return "Ackley";
+        }
     }
 
     /**
@@ -150,6 +183,9 @@ public class SingleObjectiveFunctions {
                     return false;
             }
             return true;
+        }
+        public static String name() {
+            return "BentCigar";
         }
     }
 
@@ -179,6 +215,9 @@ public class SingleObjectiveFunctions {
             }
             return true;
         }
+        public static String name() {
+            return "Zakharov";
+        }
     }
 
     /**
@@ -202,6 +241,9 @@ public class SingleObjectiveFunctions {
                     return false;
             }
             return true;
+        }
+        public static String name() {
+            return "Mishra1";
         }
     }
 
@@ -227,6 +269,9 @@ public class SingleObjectiveFunctions {
             }
             return true;
         }
+        public static String name() {
+            return "Salomon";
+        }
     }
 
 
@@ -250,6 +295,9 @@ public class SingleObjectiveFunctions {
                     return false;
             }
             return true;
+        }
+        public static String name() {
+            return "CosMix";
         }
     }
 
@@ -275,6 +323,9 @@ public class SingleObjectiveFunctions {
             }
             return true;
         }
+        public static String name() {
+            return "Rastrigin";
+        }
     }
 
     /**
@@ -297,6 +348,9 @@ public class SingleObjectiveFunctions {
                     return false;
             }
             return true;
+        }
+        public static String name() {
+            return "Quartic";
         }
     }
 
@@ -323,6 +377,9 @@ public class SingleObjectiveFunctions {
             }
             return true;
         }
+        public static String name() {
+            return "Step";
+        }
     }
 
 
@@ -348,6 +405,9 @@ public class SingleObjectiveFunctions {
                     return false;
             }
             return true;
+        }
+        public static String name() {
+            return "Ellip";
         }
     }
     

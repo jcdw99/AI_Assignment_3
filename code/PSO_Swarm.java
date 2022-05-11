@@ -4,6 +4,8 @@ public class PSO_Swarm {
     private byte FLAG;
 
     public PSO_Particle[] particles;
+    public Vector gBestVec;
+    public double gBestEval;
 
     public PSO_Swarm(double[] params, int size, int dim, byte flag) throws Exception {
         // set control parameters
@@ -60,6 +62,8 @@ public class PSO_Swarm {
             particles[i].gBestVec = best.duplicate();
             particles[i].gBest = bestEval;
         }
+        this.gBestVec = best.duplicate();
+        this.gBestEval = bestEval;
     }
 
 }

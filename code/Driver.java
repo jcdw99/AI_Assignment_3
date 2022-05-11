@@ -14,14 +14,11 @@ public class Driver {
      * @throws Exception If Vector.java is misused
      */
     public static void runPSO(int iterations, int particles, int dims, byte flag) throws Exception {
-        // control params in order [w, c1, c2]
-        double[] control = {0.7, 1.4, 1.4};
-        PSO_Swarm swarm = new PSO_Swarm(control, particles, dims, flag);
+        PSO_Swarm swarm = new PSO_Swarm(RunConfig.PSO_PARAMS, particles, dims, flag);
         for (int iter = 0; iter < iterations; iter++) {
             swarm.doUpdate();
         }
-        System.out.println("PSO found the solution: " + SingleObjectiveFunctions.evaluate(swarm.findGBest(), flag) + " for vector\n" + swarm.findGBest());
-        System.out.println("In domain? " + SingleObjectiveFunctions.inDomain(swarm.findGBest(), flag));
+        System.out.println(SingleObjectiveFunctions.getName(flag) + " PSO found the solution: " + swarm.gBestEval + " for vector\n" + swarm.gBestVec);
     }
 
     /**
@@ -38,14 +35,37 @@ public class Driver {
      * @throws Exception If Vector.java is misused
      */
     public static void runDE(int iterations, int particles, int dims, byte flag) throws Exception {
-        // control params in order [F, CR]
-        double[] control = {0.5, 0.5};
-        GE_Population population = new GE_Population(control, particles, dims, flag);
+
+        GE_Population population = new GE_Population(RunConfig.DE_PARAMS, particles, dims, flag);
         for (int iter = 0; iter < iterations; iter++) {
             population.doIteration();
         }
-        System.out.println("DE found the solution: " + population.bestEval + " for vector\n" + population.best);
-        System.out.println("In domain? " + SingleObjectiveFunctions.inDomain(population.best, flag));
+        System.out.println(SingleObjectiveFunctions.getName(flag) + " DE found the solution: " + population.bestEval + " for vector\n" + population.best);
+    }
+
+
+    /**
+     * Simulates Differential Evolution over Independent trials. 
+     *      Configurations for the simulation procedure are found in RunConfig.java
+     * @param flag
+     */
+    public static void simulateDE(byte flag) {
+        // simulate DE over independent trials, collect the results into a single structure
+        for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
+
+        }
+    }
+
+    /**
+     * Simulates Particle Swarm Optimization over Independent trials. 
+     *      Configurations for the simulation procedure are found in RunConfig.java
+     * @param flag
+     */
+    public static void simulatePSO(byte flag) {
+        // simulate DE over independent trials, collect the results into a single structure
+        for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
+
+        }
     }
 
     /**
@@ -55,7 +75,7 @@ public class Driver {
      * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
-        
+
         // Used to specify a benchmark function to be optimized
         Byte FLAG = Byte.parseByte(args[0]);
 
