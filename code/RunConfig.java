@@ -1,15 +1,15 @@
 public class RunConfig {
     
-    // constant to specify population size 
+    // Specify population size 
     public static final int PARTICLES = 30;
 
-    // constant to specify the dimension of the search space
+    // Specify the dimension of the search space
     public static final int DIM = 10;
 
-    // constant to sepcify how many iterations should be run
+    // Specify how many iterations should be run
     public static final int ITERATIONS = 5000;
     
-    // constant to specify how often quality measurements are evaluated
+    // Specify how often quality measurements are evaluated
     public static final int GRANULARITY = 5;
 
     // F and CR settings for Differential Evolution to use by default
@@ -20,4 +20,8 @@ public class RunConfig {
 
     // Number of independent trials on which to base our observations
     public static final int TRIALS = 20;
+
+    // Specify if data should be collected and written to files, or not
+    public static final boolean RECORD_MODE = true;
+
 }
