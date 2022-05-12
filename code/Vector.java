@@ -1,3 +1,4 @@
+import java.util.Random;
 
 public class Vector {
 
@@ -196,6 +197,19 @@ public class Vector {
         return new Vector(data);
     }
 
+    /**
+     * Creates a new vector of specified length where values are intalized using Normal(0,1)
+     * @param len
+     * @return
+     */
+    public static Vector normZeroOne(int len) {
+        Random r = new Random();
+        double[] data = new double[len];
+        for (int i = 0; i < len; i++) {
+            data[i] = r.nextGaussian();
+        }
+        return new Vector(data);
+    }
     /**
      * Creates a new vector of specified length where values are ascending from [1, length]
      * @param len

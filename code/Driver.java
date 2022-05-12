@@ -45,6 +45,27 @@ public class Driver {
         System.out.println(SingleObjectiveFunctions.getName(flag) + " DE found the solution: " + population.bestEval + " for vector\n" + population.best);
     }
 
+    /**
+     * Runs Big Bang Big Crunch as proposed by the literature
+     *      This function runs the entire BigBagBigCrunch evaluation procedure for 1 independent trial, using
+     *      the control parameter configurations specified in the RunConfig.java.
+     * 
+     * @param iterations Number of iterations particles may explore
+     * @param particles Number of particles participating in exploration
+     * @param dims Dimension of the search space
+     * @param flag The flag used to specify which benchmark function should be optimized
+     * @throws Exception If Vector.java is misused
+     */
+    public static void runBB(int iterations, int particles, int dims, byte flag) throws Exception {
+        BB_BC_Population population = new BB_BC_Population(particles, dims, flag);
+        for (int iter = 0; iter <= iterations; iter++) {
+            population.doIteration(iter);
+            System.out.println(SingleObjectiveFunctions.getName(flag) + " BBBC found the solution: " + SingleObjectiveFunctions.evaluate(population.centroid, FLAG) + " for vector\n" + population.centroid);
+
+        }
+        // System.out.println(SingleObjectiveFunctions.getName(flag) + " BBBC found the solution: " + SingleObjectiveFunctions.evaluate(population.centroid, FLAG) + " for vector\n" + population.centroid);
+    }
+
 
     /**
      * Simulates Differential Evolution over Independent trials. 
@@ -115,6 +136,40 @@ public class Driver {
         Utilities.writeFile(Utilities.varAtTime(data), "pso_var", flag);
     }
 
+    /**
+     * Simulates Big Bang Big Crunch over Independent trials. 
+     *      Configurations for the simulation procedure are found in RunConfig.java
+     * @param flag
+     */
+    public static void simulateBB(byte flag) throws Exception {
+        
+        // init data storage structure if record mode is specified in RunConfig. The Structure is ROWS:Trial x COL:Iteration_of_trial
+        double[][] data = (RunConfig.RECORD_MODE) ? new double[RunConfig.TRIALS][RunConfig.ITERATIONS / RunConfig.GRANULARITY + 1] : null;
+
+        // simulate DE over independent trials, collect the results into a single structure
+        for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
+
+            System.out.printf("%s%s %s Running BB Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.BLUE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+            // set up the population independently, for each trial
+            BB_BC_Population population = new BB_BC_Population(RunConfig.PARTICLES, RunConfig.DIM, flag);
+            for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {
+               
+                // do a PSO procedure update
+                population.doIteration(iter);
+
+                // write data to structure if specified
+                if (iter % RunConfig.GRANULARITY == 0 && RunConfig.RECORD_MODE) {
+                    data[trial][iter/RunConfig.GRANULARITY] = SingleObjectiveFunctions.evaluate(population.centroid, FLAG);
+                }
+            }
+        }
+        // write the recorded data to files if specified by RunConfig.java
+        Utilities.writeFile(data, "bb_raw", flag);
+        Utilities.writeFile(Utilities.averageAtTime(data), "bb_avg", flag);
+        Utilities.writeFile(Utilities.varAtTime(data), "bb_var", flag);
+    }
+
+
 
     /**
      * Short Example driver into the Program usage.
@@ -128,7 +183,7 @@ public class Driver {
         FLAG = Byte.parseByte(args[0]);
         simulateDE(FLAG);
         simulatePSO(FLAG);
-
+        simulateBB(FLAG);
     }
 
 }

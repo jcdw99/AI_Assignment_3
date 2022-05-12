@@ -111,9 +111,11 @@ def plot_all_means(type, show=False):
     widths = []
     if (type == 'pso'):
         widths = [400,200,30,100,20, 30, 20, 250, 25]
-    else:
+    elif (type == 'de'):
         # widths = [400,200,30,100,20, 30, 20, 250, 25]
         widths = [80, 80, 20, 50, 20, 10, 10, 100, 20]
+    else:
+        widths = [1000] * 9
 
     for i in range(len(names)):
         plot = plot_single(names[i], type, widths[i])
@@ -138,6 +140,7 @@ def plot_all_both(show=False):
 
 plot_all_means('pso')
 plot_all_means('de')
+plot_all_means('bb')
 plot_all_both()
 
 print("\nDONE\n")

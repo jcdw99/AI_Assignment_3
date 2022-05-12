@@ -24,4 +24,7 @@ public class RunConfig {
     // Specify if data should be collected and written to files, or not
     public static final boolean RECORD_MODE = true;
 
+    // Used to specify the percentage of domain width that the largest BANG can be.
+    public static final double DOM_WIDTH_FACTOR = 0.3;
+
 }
