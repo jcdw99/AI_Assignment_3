@@ -54,9 +54,7 @@ public class BB_BC_Population {
         double explosion_factor = Math.pow(k, proportion) - k;
         Vector domain = SingleObjectiveFunctions.getDomain(this.FLAG);
         double domain_width_fact = (domain.atIndex(1) - domain.atIndex(0)) * RunConfig.DOM_WIDTH_FACTOR;
-        // Vector domain = SingleObjectiveFunctions.getDomain(this.FLAG);
-        // double widthProp = Math.pow(1 - proportion, 2);
-        // double domWidth = RunConfig.DOM_WIDTH_FACTOR * (domain.atIndex(1) - domain.atIndex(0)) * widthProp;
+
         for (int i = 0; i <  this.population.length; i++) {
             // Vector scaleNormVec = Vector.normZeroOne(this.centroid.size()).scale(domWidth).add(this.centroid);
             Vector scaleNormVec = Vector.normZeroOne(this.centroid.size()).scale(domain_width_fact * explosion_factor).add(this.centroid);

@@ -69,6 +69,16 @@ def add_avg_center(plot, directory, type1, width, dev=True, colorr='blue'):
         plot.legend()
         return plot
 
+
+"""
+plots techniques on the same plot, for easier comparison
+"""
+def plot_supplied_on_same(supplied, directory, width):
+    colors = ['blue', 'red', 'green']
+    for index in range(len(supplied)):
+        add_avg_center(plt, directory, supplied[index], width, True, colors[index])
+    return plt 
+
 """
 plots techniques on the same plot, for easier comparison
 """
@@ -84,8 +94,9 @@ def plot_both_on_same(directory, width):
     psocolor='blue'
 
     for i in range(1,len(observations_de)):
-        plt.plot(x_axis, observations_pso[i], alpha=0.3, color=psocolor)
-        plt.plot(x_axis, observations_de[i], alpha=0.3, color=decolor)
+        pass
+        # plt.plot(x_axis, observations_pso[i], alpha=0.3, color=psocolor)
+        # plt.plot(x_axis, observations_de[i], alpha=0.3, color=decolor)
 
     add_avg_center(plt, directory, 'pso', width, True, psocolor)
     add_avg_center(plt, directory, 'de', width, True, decolor)
@@ -128,14 +139,34 @@ def plot_all_means(type, show=False):
 
 def plot_all_both(show=False):
     names = ["Ackley", "Rastrigin", "Ellip", "CosMix", "Step", "Quartic", "Mishra1", "Salomon", "BentCigar"]
-    widths = [240,140,25,75,20, 20, 15, 175, 20]
+    widths = [300,250,40,100,50, 40, 35, 275, 50]
     for i in range(len(names)):
-        plot = plot_both_on_same(names[i], widths[i])
+        # plots all on this axis
+        plot = plot_supplied_on_same(['pso', 'de', 'bb'], names[i], widths[i])
         if (show):
             plot.show()
         else:
-            plot.savefig(rootway + "/{}/{}_both".format(names[i], names[i]) + ".png")
+            plot.savefig(rootway + "/{}/{}_all".format(names[i], names[i]) + ".png")
         plot.clf()
+        plot = plot_supplied_on_same(['pso', 'de'], names[i], widths[i])
+        if (show):
+            plot.show()
+        else:
+            plot.savefig(rootway + "/{}/{}_pso_de".format(names[i], names[i]) + ".png")
+        plot.clf()
+        plot = plot_supplied_on_same(['pso', 'bb'], names[i], widths[i])
+        if (show):
+            plot.show()
+        else:
+            plot.savefig(rootway + "/{}/{}_pso_bb".format(names[i], names[i]) + ".png")
+        plot.clf()
+        plot = plot_supplied_on_same(['de', 'bb'], names[i], widths[i])
+        if (show):
+            plot.show()
+        else:
+            plot.savefig(rootway + "/{}/{}_pso_bb".format(names[i], names[i]) + ".png")
+        plot.clf()
+
 
 
 plot_all_means('pso')

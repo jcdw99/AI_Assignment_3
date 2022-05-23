@@ -1,5 +1,5 @@
 public class DE_Population {
-    
+
     public Vector[] population;
     public Vector best;
     public double bestEval;
@@ -85,8 +85,6 @@ public class DE_Population {
             bestEval = (newEval < bestEval) ? newEval: bestEval;
 
         }
-
-
     }
 
     /**

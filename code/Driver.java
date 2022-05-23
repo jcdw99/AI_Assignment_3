@@ -1,3 +1,5 @@
+import java.io.File;
+import java.util.Scanner;
 public class Driver {
 
     public static byte FLAG;
@@ -80,7 +82,7 @@ public class Driver {
         // simulate DE over independent trials, collect the results into a single structure
         for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
 
-            System.out.printf("%s%s %sRunning Differential Evolution Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.BLUE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+            System.out.printf("%s%s %sRunning Differential Evolution Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, Utilities.YELLOW, trial + 1, Utilities.RESET);
             //set up the population independently, for each trial
             DE_Population population = new DE_Population(RunConfig.DE_PARAMS, RunConfig.PARTICLES, RunConfig.DIM, flag);
             for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {
@@ -116,9 +118,10 @@ public class Driver {
         // simulate DE over independent trials, collect the results into a single structure
         for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
 
-            System.out.printf("%s%s %s Running PSO Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.BLUE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+            System.out.printf("%s%s %s Running PSO Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+            
             // set up the population independently, for each trial
-            PSO_Swarm swarm = new PSO_Swarm(RunConfig.PSO_PARAMS, RunConfig.PARTICLES, RunConfig.DIM, flag);
+            PSO_Swarm swarm = new PSO_Swarm(readControlParams((byte) 1, flag), RunConfig.PARTICLES, RunConfig.DIM, flag);
             for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {
                
                 // do a PSO procedure update
@@ -137,6 +140,25 @@ public class Driver {
     }
 
     /**
+     * Reads the tuned control parameter configuration file from the ../params directory
+     * 
+     * @param algoFlag flag which specifies either PSO or DE to be used
+     * @param funcflag flag which specifies the benchmark function.
+     * @return
+     * @throws Exception
+     */
+    public static double[] readControlParams(byte algoFlag, byte funcflag) throws Exception {
+        String algo = (algoFlag == 1) ? "pso":"de";
+        String filePath = String.format("../params/%s/%s_%s.tuned", algo, SingleObjectiveFunctions.getName(funcflag), algo);
+        Scanner sc = new Scanner(new File(filePath));
+        String[] data = sc.nextLine().split(",");
+        double[] params = new double[data.length];
+        for (int i = 0; i < params.length; i++)
+            params[i] = Double.parseDouble(data[i]);
+       return params;
+    }
+
+    /**
      * Simulates Big Bang Big Crunch over Independent trials. 
      *      Configurations for the simulation procedure are found in RunConfig.java
      * @param flag
@@ -149,7 +171,7 @@ public class Driver {
         // simulate DE over independent trials, collect the results into a single structure
         for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
 
-            System.out.printf("%s%s %s Running BB Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.BLUE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+            System.out.printf("%s%s %s Running BB Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, Utilities.YELLOW, trial + 1, Utilities.RESET);
             // set up the population independently, for each trial
             BB_BC_Population population = new BB_BC_Population(RunConfig.PARTICLES, RunConfig.DIM, flag);
             for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {

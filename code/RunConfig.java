@@ -7,7 +7,7 @@ public class RunConfig {
     public static final int DIM = 10;
 
     // Specify how many iterations should be run
-    public static final int ITERATIONS = 5000;
+    public static final int ITERATIONS = 2500;
     
     // Specify how often quality measurements are evaluated
     public static final int GRANULARITY = 5;

@@ -281,7 +281,7 @@ public class SingleObjectiveFunctions {
      */
     static class CosMix {
         public static double evaluate(Vector pos) throws Exception {
-            return -0.1 * pos.scale(5 * Math.PI).cos().sum() + pos.pow(2).sum() + 1;
+            return -0.1 * pos.scale(5 * Math.PI).cos().sum() + pos.pow(2).sum() + 0.1 * RunConfig.DIM;
         }
         public static Vector getDomain() {
             double[] dat = {-1, 1};
