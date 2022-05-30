@@ -58,8 +58,8 @@ public class Driver {
      * @param flag The flag used to specify which benchmark function should be optimized
      * @throws Exception If Vector.java is misused
      */
-    public static void runBB(int iterations, int particles, int dims, byte flag) throws Exception {
-        BB_BC_Population population = new BB_BC_Population(particles, dims, flag);
+    public static void runBB(int iterations, int particles, int dims, byte flag, boolean orig) throws Exception {
+        BB_BC_Population population = new BB_BC_Population(particles, dims, flag, orig);
         for (int iter = 0; iter <= iterations; iter++) {
             population.doIteration(iter);
             System.out.println(SingleObjectiveFunctions.getName(flag) + " BBBC found the solution: " + SingleObjectiveFunctions.evaluate(population.centroid, FLAG) + " for vector\n" + population.centroid);
@@ -83,8 +83,12 @@ public class Driver {
         for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
 
             System.out.printf("%s%s %sRunning Differential Evolution Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, Utilities.YELLOW, trial + 1, Utilities.RESET);
-            //set up the population independently, for each trial
-            DE_Population population = new DE_Population(RunConfig.DE_PARAMS, RunConfig.PARTICLES, RunConfig.DIM, flag);
+            // set up the population independently, for each trial
+
+            // check RunConfig field, if true we should use tuned values, else use default.
+            double[] params = (RunConfig.OPTIMIZED) ? readControlParams((byte) 2, flag): RunConfig.PSO_PARAMS;
+
+            DE_Population population = new DE_Population(params, RunConfig.PARTICLES, RunConfig.DIM, flag);
             for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {
           
                 // do a DE generation update
@@ -119,9 +123,13 @@ public class Driver {
         for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
 
             System.out.printf("%s%s %s Running PSO Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+                        
+            
+            // check RunConfig field, if true we should use tuned values, else use default.
+            double[] params = (RunConfig.OPTIMIZED) ? readControlParams((byte) 1, flag): RunConfig.PSO_PARAMS;
             
             // set up the population independently, for each trial
-            PSO_Swarm swarm = new PSO_Swarm(readControlParams((byte) 1, flag), RunConfig.PARTICLES, RunConfig.DIM, flag);
+            PSO_Swarm swarm = new PSO_Swarm(params, RunConfig.PARTICLES, RunConfig.DIM, flag);
             for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {
                
                 // do a PSO procedure update
@@ -163,7 +171,7 @@ public class Driver {
      *      Configurations for the simulation procedure are found in RunConfig.java
      * @param flag
      */
-    public static void simulateBB(byte flag) throws Exception {
+    public static void simulateBB(byte flag, boolean orig) throws Exception {
         
         // init data storage structure if record mode is specified in RunConfig. The Structure is ROWS:Trial x COL:Iteration_of_trial
         double[][] data = (RunConfig.RECORD_MODE) ? new double[RunConfig.TRIALS][RunConfig.ITERATIONS / RunConfig.GRANULARITY + 1] : null;
@@ -171,9 +179,10 @@ public class Driver {
         // simulate DE over independent trials, collect the results into a single structure
         for (int trial = 0; trial < RunConfig.TRIALS; trial++) {
 
-            System.out.printf("%s%s %s Running BB Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, Utilities.YELLOW, trial + 1, Utilities.RESET);
+            String version = (orig) ? "Original": "Modified";
+            System.out.printf("%s%s %s Running %s BB Trial: %s%d%s\n", Utilities.RED, SingleObjectiveFunctions.getName(FLAG), Utilities.WHITE, version, Utilities.YELLOW, trial + 1, Utilities.RESET);
             // set up the population independently, for each trial
-            BB_BC_Population population = new BB_BC_Population(RunConfig.PARTICLES, RunConfig.DIM, flag);
+            BB_BC_Population population = new BB_BC_Population(RunConfig.PARTICLES, RunConfig.DIM, flag, orig);
             for (int iter = 0; iter <= RunConfig.ITERATIONS; iter++) {
                
                 // do a PSO procedure update
@@ -186,9 +195,9 @@ public class Driver {
             }
         }
         // write the recorded data to files if specified by RunConfig.java
-        Utilities.writeFile(data, "bb_raw", flag);
-        Utilities.writeFile(Utilities.averageAtTime(data), "bb_avg", flag);
-        Utilities.writeFile(Utilities.varAtTime(data), "bb_var", flag);
+        Utilities.writeFile(data, String.format("bb_%s_raw", (orig) ? "orig": "mod"), flag);
+        Utilities.writeFile(Utilities.averageAtTime(data), String.format("bb_%s_avg", (orig) ? "orig": "mod"), flag);
+        Utilities.writeFile(Utilities.varAtTime(data), String.format("bb_%s_var", (orig) ? "orig": "mod"), flag);
     }
 
 
@@ -205,7 +214,8 @@ public class Driver {
         FLAG = Byte.parseByte(args[0]);
         simulateDE(FLAG);
         simulatePSO(FLAG);
-        simulateBB(FLAG);
+        simulateBB(FLAG, true);
+        simulateBB(FLAG, false);
     }
 
 }

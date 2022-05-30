@@ -3,9 +3,13 @@ public class BB_BC_Population {
     public Vector[] population;
     public Vector centroid;
     private byte FLAG;
+    private boolean ORIGINAL;
 
 
-    public BB_BC_Population(int size, int dim, byte flag) throws Exception {
+    public BB_BC_Population(int size, int dim, byte flag, boolean orig) throws Exception {
+        
+        // used to specify if original BB-BC should be exectured, or my adapted variation
+        this.ORIGINAL = orig;
         
         // set global instance parameters 
         this.FLAG = flag;
@@ -50,18 +54,48 @@ public class BB_BC_Population {
      */
     public void doBigBang(double proportion) throws Exception {
 
-        double k = 0.005;
-        double explosion_factor = Math.pow(k, proportion) - k;
-        Vector domain = SingleObjectiveFunctions.getDomain(this.FLAG);
-        double domain_width_fact = (domain.atIndex(1) - domain.atIndex(0)) * RunConfig.DOM_WIDTH_FACTOR;
-
         for (int i = 0; i <  this.population.length; i++) {
             // Vector scaleNormVec = Vector.normZeroOne(this.centroid.size()).scale(domWidth).add(this.centroid);
-            Vector scaleNormVec = Vector.normZeroOne(this.centroid.size()).scale(domain_width_fact * explosion_factor).add(this.centroid);
+            Vector scaleNormVec = (this.ORIGINAL) ? theirDisperse(proportion) : myDisperse(proportion);
             this.population[i] = scaleNormVec;
         }
     }
 
+
+    /**
+     * This uses my updated version of the disperse operation in the big bang phase of this algorithm. 
+     * My version is based off 'explosion' violence following the function  y = k^x - k for x in [0, 1].
+     * 
+     * In my version the current value k was found to be 0.005, which catalyzes a fast reduction in explosive strength. This is 
+     * then multiplied by a percentage of solution-space domain width. This final value scales a standard normal vector, which is then
+     * added to the centroid position. This final sum is resulting position of the particle after big bang.
+     * 
+     * @param proportion represents (x) in the above equation. It is iteration we are on, divided by MAX ITERS from RunConfig.
+     * @return
+     */
+    public Vector myDisperse(double proportion) throws Exception {
+        double k = 0.005;
+        double explosion_factor = (Math.pow(k, proportion) - k) / (1 - k);
+        Vector domain = SingleObjectiveFunctions.getDomain(this.FLAG);
+        double domain_width_fact = (domain.atIndex(1) - domain.atIndex(0)) * RunConfig.DOM_WIDTH_FACTOR;
+        return  Vector.normZeroOne(this.centroid.size()).scale(domain_width_fact * explosion_factor).add(this.centroid);
+    }
+
+
+    /**
+     * This is their disperse function as written in the big-bang big-crunch algorithm paper. 
+     * 
+     * @param proportionIt : It is iteration we are on, divided by MAX ITERS from RunConfig.
+     * @return
+     */
+    public Vector theirDisperse(double proportion) throws Exception {
+        Vector domain = SingleObjectiveFunctions.getDomain(this.FLAG);
+        double upper = domain.atIndex(1);
+        Vector random = Vector.normZeroOne(this.centroid.size());
+        double iter = proportion * RunConfig.ITERATIONS;
+        random = random.scale(upper / iter);
+        return random.add(this.centroid);
+    }
     /**
      * This does 1 iteration of the BB_BC optimization procedure. A current iteration number is required 
      * because the big bang procedure requires a power constant, which represents how far particles should be 

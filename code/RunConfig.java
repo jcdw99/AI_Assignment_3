@@ -4,13 +4,16 @@ public class RunConfig {
     public static final int PARTICLES = 30;
 
     // Specify the dimension of the search space
-    public static final int DIM = 10;
+    public static final int DIM = 20;
 
     // Specify how many iterations should be run
-    public static final int ITERATIONS = 2500;
+    public static final int ITERATIONS = 5000;
     
     // Specify how often quality measurements are evaluated
     public static final int GRANULARITY = 5;
+
+    // reads the tuned model control parameters from files, if this is false, the params below are used.
+    public static final boolean OPTIMIZED = true;
 
     // F and CR settings for Differential Evolution to use by default
     public static final double[] DE_PARAMS = {0.5, 0.5};

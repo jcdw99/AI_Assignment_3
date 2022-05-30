@@ -37,6 +37,7 @@ class OptimizationSuite {
                 trainDE();
                 return;
             case BB:
+                // trainBB();
                 break;
             default:
                 System.out.printf("%sAlgo-Flag (%d) not recognized%s\n", Utilities.RED, algoFlag, Utilities.RESET);
@@ -146,8 +147,55 @@ class OptimizationSuite {
     }
 
 
+    // private void trainBB() throws Exception {
+             
+    //     double kBound = 0.1;
+    //     // w possibilities
+    //     int count = 0;
+    //     for (double k = kBound/(6*GRANULARITY); k < kBound; k += kBound/(6*GRANULARITY)) {
+    //                 // this configuration is stable, lets test it.
+    //                 double avgResult = 0.0;
+    //                 for (int i = 0; i < SIMULATIONS; i++) {
+    //                     BB_BC_Population pop = new BB_BC_Population(RunConfig.PARTICLES, RunConfig.DIM, algoFlag, k);
+    //                     for (int iter = 0; iter < RunConfig.ITERATIONS; iter++)
+    //                         pop.doIteration(iter);
+    //                     double result = SingleObjectiveFunctions.evaluate(pop.centroid, algoFlag);
+    //                     avgResult += result;                        
+    //                 }
+    //                 avgResult /= 3;
+    //                 // check if this setting is worth saving
+    //                 if (avgResult < this.bestResult) {
+    //                     double[] dat = {k}; 
+    //                     Vector best = new Vector(dat);
+    //                     System.out.printf("%s%s%s Found %s%s%s which yields %s%7f%s < %s%7f%s\n", 
+    //                         Utilities.BLUE, SingleObjectiveFunctions.getName(benchFlag), Utilities.RESET,
+    //                         Utilities.YELLOW, best.toString().replaceAll("\n", ""), Utilities.RESET, Utilities.GREEN,
+    //                         avgResult, Utilities.RESET, Utilities.RED, this.bestResult, Utilities.RESET
+    //                     );
+    //                     this.bestResult = avgResult;
+    //                     this.bestParamConfig = best;
+    //                 }
+    //                 count++;
+    //                 System.out.printf("%s%s:%d/%d%s\n", Utilities.YELLOW, SingleObjectiveFunctions.getName(benchFlag), count, 6 * GRANULARITY, Utilities.RESET);
+    //     }   
+    //     System.out.printf("\n\n%sDONE:%s\tThe Best Setting for %s%s%s is %s%s\n", Utilities.GREEN, Utilities.RESET, 
+    //     Utilities.GREEN, SingleObjectiveFunctions.getName(this.benchFlag), Utilities.RESET, Utilities.YELLOW, this.bestParamConfig.toString().replaceAll("\n", ""),Utilities.RESET);
+
+    //     // write this result to a file?
+    //     toFile();
+    
+
+    // }
+
+
     private void toFile() {
-        String algo = (algoFlag == 1) ? "pso":"de";
+        String algo;
+        if (algoFlag == 1)
+            algo = "pso";
+        else if (algoFlag == 2)
+            algo = "de";
+        else 
+            algo = "bbmod";
         try {
             FileWriter f = new FileWriter(new File(String.format("../params/%s/%s_%s.tuned", algo, SingleObjectiveFunctions.getName(this.benchFlag), algo)));
             String output =  "";

@@ -3,7 +3,15 @@ import os
 import pandas as pd
 import numpy as np
 
+colPair = {'pso':'blue', 'de':'red', 'bb_mod':'green', 'bb_orig':'black'}
 
+
+def swapName(input):
+    if input == "BB_ORIG":
+        return 'BB-BC'
+    if input == "BB_MOD":
+        return 'MBB-BC'
+    return input
 
 """ 
 This function returns the AVERAGE data stored in the specified directory. 
@@ -53,6 +61,9 @@ def plot_2darr_raw(data):
     observations = data[1:]
     for i in range(1,len(observations)):
         plt.plot(x_axis, observations[i], alpha=0.3)
+    ax = plt.gca()
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Objective function evaluation")
     return plt    
 
 """
@@ -61,11 +72,11 @@ Add Average to center of plot
 def add_avg_center(plot, directory, type1, width, dev=True, colorr='blue'):
         averages = get_average(directory, type1, width)
         avgdat = np.array((averages[1].astype(float)), dtype=float)
-        plot.plot(averages[0], averages[1], alpha = 1, linewidth=2, label='Average for ' + str(directory) + ' using ' + type1.upper(), color=colorr)
+        plot.plot(averages[0], averages[1], alpha = 1, linewidth=2, label='Average for ' + str(directory) + ' using ' + swapName(type1.upper()), color=colorr)
         if (dev):
             vardat = get_var(directory, type1, width)
             devdat = np.array(np.sqrt(vardat[1].astype(float)), dtype=float)
-            plot.fill_between([int(i) for i in averages[0]], np.array(avgdat + devdat), np.array(avgdat - devdat), alpha=0.3, label="Standard Deviation")
+            plot.fill_between([int(i) for i in averages[0]], np.array(avgdat + devdat), np.array(avgdat - devdat), alpha=0.3, label="Standard Deviation", color=colorr)
         plot.legend()
         return plot
 
@@ -74,29 +85,27 @@ def add_avg_center(plot, directory, type1, width, dev=True, colorr='blue'):
 plots techniques on the same plot, for easier comparison
 """
 def plot_supplied_on_same(supplied, directory, width):
-    colors = ['blue', 'red', 'green']
     for index in range(len(supplied)):
-        add_avg_center(plt, directory, supplied[index], width, True, colors[index])
+        add_avg_center(plt, directory, supplied[index], width, True, colPair.get(supplied[index]))
+
+    ax = plt.gca()
+    ax.set_xlabel("Iteration")
+    ax.set_ylabel("Objective function evaluation")
     return plt 
 
 """
 plots techniques on the same plot, for easier comparison
 """
 def plot_both_on_same(directory, width):
-    raw_pso_data = get_raw(directory, 'pso', width)
-    raw_de_data = get_raw(directory, 'de', width)
-    
-    x_axis = raw_pso_data[0]
-    observations_pso = raw_pso_data[1:]
-    observations_de = raw_de_data[1:]
 
     decolor = 'red'
     psocolor='blue'
-
-    for i in range(1,len(observations_de)):
-        pass
-        # plt.plot(x_axis, observations_pso[i], alpha=0.3, color=psocolor)
-        # plt.plot(x_axis, observations_de[i], alpha=0.3, color=decolor)
+    # raw_de_data = get_raw(directory, 'de', width)
+    # observations_de = raw_de_data[1:]
+    # for i in range(1,len(observations_de)):
+    #     pass
+    #     # plt.plot(x_axis, observations_pso[i], alpha=0.3, color=psocolor)
+    #     # plt.plot(x_axis, observations_de[i], alpha=0.3, color=decolor)
 
     add_avg_center(plt, directory, 'pso', width, True, psocolor)
     add_avg_center(plt, directory, 'de', width, True, decolor)
@@ -112,10 +121,6 @@ def plot_single(directory, type, width):
 
 rootway = '../results/'
 directory_list = next(os.walk(rootway))[1]
-
-def save_plot_at_path(plot, ):
-    pass
-
 
 def plot_all_means(type, show=False):
     names = ["Ackley", "Rastrigin", "Ellip", "CosMix", "Step", "Quartic", "Mishra1", "Salomon", "BentCigar"]
@@ -133,48 +138,76 @@ def plot_all_means(type, show=False):
         if (show):
             plot.show()
         else:
-            plot.savefig(rootway + "/{}/{}_average_".format(names[i], names[i]) + str(type) + ".png")
+            plot.savefig(rootway + "/{}/{}_average_{}".format(names[i], names[i], str(type)) + ".png")
         plot.clf()
 
 
 def plot_all_both(show=False):
     names = ["Ackley", "Rastrigin", "Ellip", "CosMix", "Step", "Quartic", "Mishra1", "Salomon", "BentCigar"]
-    widths = [300,250,40,100,50, 40, 35, 275, 50]
+    widths = [600,650,440,450,350, 450, 455, 750, 480]
+    
     for i in range(len(names)):
         # plots all on this axis
-        plot = plot_supplied_on_same(['pso', 'de', 'bb'], names[i], widths[i])
+        plot = plot_supplied_on_same(['pso', 'de', 'bb_mod', "bb_orig"], names[i], widths[i])
         if (show):
             plot.show()
         else:
             plot.savefig(rootway + "/{}/{}_all".format(names[i], names[i]) + ".png")
         plot.clf()
+       
         plot = plot_supplied_on_same(['pso', 'de'], names[i], widths[i])
         if (show):
             plot.show()
         else:
             plot.savefig(rootway + "/{}/{}_pso_de".format(names[i], names[i]) + ".png")
         plot.clf()
-        plot = plot_supplied_on_same(['pso', 'bb'], names[i], widths[i])
+        
+        plot = plot_supplied_on_same(['pso', 'bb_mod'], names[i], widths[i])
         if (show):
             plot.show()
         else:
-            plot.savefig(rootway + "/{}/{}_pso_bb".format(names[i], names[i]) + ".png")
+            plot.savefig(rootway + "/{}/{}_pso_bbmod".format(names[i], names[i]) + ".png")
         plot.clf()
-        plot = plot_supplied_on_same(['de', 'bb'], names[i], widths[i])
+       
+        plot = plot_supplied_on_same(['de', 'bb_mod'], names[i], widths[i])
         if (show):
             plot.show()
         else:
-            plot.savefig(rootway + "/{}/{}_pso_bb".format(names[i], names[i]) + ".png")
+            plot.savefig(rootway + "/{}/{}_de_bbmod".format(names[i], names[i]) + ".png")
+        plot.clf()
+        
+        plot = plot_supplied_on_same(['bb_orig', 'bb_mod'], names[i], widths[i])
+        if (show):
+            plot.show()
+        else:
+            plot.savefig(rootway + "/{}/{}_bborig_bbmod".format(names[i], names[i]) + ".png")
+        plot.clf()
+
+        plot = plot_supplied_on_same(['bb_orig', 'de'], names[i], widths[i])
+        if (show):
+            plot.show()
+        else:
+            plot.savefig(rootway + "/{}/{}_bborig_de".format(names[i], names[i]) + ".png")
+        plot.clf()
+
+
+        plot = plot_supplied_on_same(['bb_orig', 'pso'], names[i], widths[i])
+        if (show):
+            plot.show()
+        else:
+            plot.savefig(rootway + "/{}/{}_bborig_pso".format(names[i], names[i]) + ".png")
         plot.clf()
 
 
 
 plot_all_means('pso')
 plot_all_means('de')
-plot_all_means('bb')
+plot_all_means('bb_mod')
+plot_all_means('bb_orig')
 plot_all_both()
 
 print("\nDONE\n")
+
 
 
 # for directory in directory_list:

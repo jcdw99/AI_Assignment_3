@@ -36,7 +36,20 @@ public class Utilities {
             }
             averages[col] = sum / (double) data.length;
         }
+
+        double[] var = varAtTime(data);
+        String mean = String.format("%6.2e", averages[averages.length - 1]);
+        String varr = String.format("%6.2e", var[averages.length - 1]);
+
+        int edexMean = mean.indexOf("e");
+        int edexVar = varr.indexOf("e");
+        mean = mean.substring(0, edexMean) + "e^{" + mean.substring(edexMean+1) + "}";
+        varr = varr.substring(0, edexVar) + "e^{" + varr.substring(edexVar+1) + "}";
+        System.out.println(String.format("& $%s$ & DO & $%s$ & DO & \\\\", mean, varr).replaceAll(",", "."));
+        
+
         return averages;
+
     }
 
     /**
