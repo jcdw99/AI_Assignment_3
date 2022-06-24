@@ -45,7 +45,6 @@ public class Utilities {
         int edexVar = varr.indexOf("e");
         mean = mean.substring(0, edexMean) + "e^{" + mean.substring(edexMean+1) + "}";
         varr = varr.substring(0, edexVar) + "e^{" + varr.substring(edexVar+1) + "}";
-        System.out.println(String.format("& $%s$ & DO & $%s$ & DO & \\\\", mean, varr).replaceAll(",", "."));
         
 
         return averages;
